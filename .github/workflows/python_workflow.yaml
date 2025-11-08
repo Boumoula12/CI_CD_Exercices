@@ -1,20 +1,22 @@
-config:
-  slack:
-    channels:
-      - workflow-orchestration
-      - builds-911
+name: CI
 
-workflow:
-  run: |
-    echo "Running script.py"
-    python3 script.py
-  notify:
-    - slack:
-        channels: ${{ config.slack.channels }}
-        message: >-
-          It appears that your run has failed.
-          To gain more insights into the failure,
-          it is recommended to examine the CI logs.
-          In case further assistance is required,
-          feel free to contact the Engineer on call.
-      if: run.state == "failed"
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Run Python script
+        run: |
+          python3 hello_world.py
